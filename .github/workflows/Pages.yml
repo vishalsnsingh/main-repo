@@ -13,6 +13,10 @@ permissions:
   pages: write
   id-token: write
 
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -22,21 +26,20 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
 
     steps:
-      # 1. Checkout source code
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # 2. Configure GitHub Pages
-      - name: Setup GitHub Pages
+      - name: Configure GitHub Pages
         uses: actions/configure-pages@v5
 
-      # 3. Upload website files
       - name: Upload website files
         uses: actions/upload-pages-artifact@v3
         with:
+          name: my-static-site
           path: .
 
-      # 4. Deploy website
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+        with:
+          artifact_name: my-static-site
